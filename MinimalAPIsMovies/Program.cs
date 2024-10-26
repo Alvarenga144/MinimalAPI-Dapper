@@ -4,11 +4,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Services zone - Begin
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(configuration =>
+    {
+        configuration.WithOrigins(builder.Configuration["AllowedOrigins"]!).AllowAnyMethod().AllowAnyHeader();
+    });
+
+    options.AddPolicy("free", configuration =>
+    {
+        configuration.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+builder.Services.AddOutputCache();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Services zone - End
 
 var app = builder.Build();
 
 // Middlewares zone - Begin
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors();
+app.UseOutputCache();
 
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/genres", () =>
@@ -33,7 +55,7 @@ app.MapGet("/genres", () =>
     };
 
     return genres;
-});
+}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
 
 // Middlewares zone - End
 
