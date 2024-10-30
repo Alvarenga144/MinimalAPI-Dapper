@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 using MinimalAPIsMovies.DTOs;
 using MinimalAPIsMovies.Entities;
@@ -19,16 +20,14 @@ namespace MinimalAPIsMovies.Endpoints
             return group;
         }
 
-        static async Task<Ok<List<GenreDTO>>> GetGenresList(IGenresRepository genresRepository)
+        static async Task<Ok<List<GenreDTO>>> GetGenresList(IGenresRepository genresRepository, IMapper mapper)
         {
             var genres = await genresRepository.GetAll();
-            var genresDTOs = genres
-                .Select(x => new GenreDTO { Id = x.Id, Name = x.Name })
-                .ToList();
+            var genresDTOs = mapper.Map<List<GenreDTO>>(genres);
             return TypedResults.Ok(genresDTOs);
         }
 
-        static async Task<Results<Ok<GenreDTO>, NotFound>> GetById(int id, IGenresRepository genresRepository)
+        static async Task<Results<Ok<GenreDTO>, NotFound>> GetById(int id, IGenresRepository genresRepository, IMapper mapper)
         {
             var genre = await genresRepository.GetById(id);
 
@@ -37,35 +36,24 @@ namespace MinimalAPIsMovies.Endpoints
                 return TypedResults.NotFound();
             }
 
-            var genreDTO = new GenreDTO
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
+            var genreDTO = mapper.Map<GenreDTO>(genre);
 
             return TypedResults.Ok(genreDTO);
         }
 
-        static async Task<Created<GenreDTO>> Create(CreateGenreDTO createGenreDTO, IGenresRepository genresRepository, IOutputCacheStore outputCacheStore)
+        static async Task<Created<GenreDTO>> Create(CreateGenreDTO createGenreDTO, IGenresRepository genresRepository, IOutputCacheStore outputCacheStore, IMapper mapper)
         {
-            var genre = new Genre
-            {
-                Name = createGenreDTO.Name
-            };
+            var genre = mapper.Map<Genre>(createGenreDTO); ;
 
             await genresRepository.Create(genre);
             await outputCacheStore.EvictByTagAsync("genres-get", default);
 
-            var genreDTO = new GenreDTO
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
+            var genreDTO = mapper.Map<GenreDTO>(genre);
 
             return TypedResults.Created($"/genres/{genre.Id}", genreDTO);
         }
 
-        static async Task<Results<NotFound, NoContent>> Update(int id, CreateGenreDTO createGenreDTO, IGenresRepository repository, IOutputCacheStore outputCacheStore)
+        static async Task<Results<NotFound, NoContent>> Update(int id, CreateGenreDTO createGenreDTO, IGenresRepository repository, IOutputCacheStore outputCacheStore, IMapper mapper)
         {
             var exist = await repository.Exist(id);
 
@@ -74,11 +62,8 @@ namespace MinimalAPIsMovies.Endpoints
                 return TypedResults.NotFound();
             }
 
-            var genre = new Genre
-            {
-                Id = id,
-                Name = createGenreDTO.Name
-            };
+            var genre = mapper.Map<Genre>(createGenreDTO);
+            genre.Id = id;
 
             await repository.Update(genre);
             await outputCacheStore.EvictByTagAsync("genres-get", default);
