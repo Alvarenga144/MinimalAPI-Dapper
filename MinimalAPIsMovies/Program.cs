@@ -36,33 +36,28 @@ app.UseCors();
 app.UseOutputCache();
 
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/genres", () =>
-{
-    var genres = new List<Genre>()
-    {
-        new Genre
-        {
-            Id = 1,
-            Name = "Drama",
-        },
-        new Genre
-        {
-            Id = 2,
-            Name = "Comedy",
-        },
-        new Genre
-        {
-            Id = 3,
-            Name = "Horror",
-        },
-    };
 
-    return genres;
-}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
+app.MapGet("/genres", async (IGenresRepository genresRepository) =>
+{
+    return await genresRepository.GetAll();
+}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)));
+
+app.MapGet("/genres/{id:int}", async (int id, IGenresRepository genresRepository) =>
+{
+    var genre = await genresRepository.GetById(id);
+
+    if (genre is null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(genre);
+});
+
 app.MapPost("/genres", async (Genre genre, IGenresRepository genresRepository) =>
 {
     await genresRepository.Create(genre);
-    return TypedResults.Ok();
+    return TypedResults.Created($"/genres/{genre.Id}", genre);
 });
 
 // Middlewares zone - End

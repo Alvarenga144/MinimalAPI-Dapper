@@ -13,14 +13,46 @@ namespace MinimalAPIsMovies.Repositories
             connectionString = configuration.GetConnectionString("DefaultConnecion")!;
         }
 
-        public Task<int> Create(Genre genre)
+        public async Task<int> Create(Genre genre)
         {
             using (var connection = new SqlConnection(connectionString))
             {
-                var query = connection.Query("SELECT 1").FirstOrDefault();
+                var query = @"
+                            INSERT INTO Genres (Name)
+                            VALUES (@Name);
+
+                            Select SCOPE_IDENTITY()
+                            ";
+
+                var id = await connection.QuerySingleAsync<int>(query, genre);
+                genre.Id = id;
+                return id;
             }
 
-            return Task.FromResult(0);
+        }
+
+        public async Task<List<Genre>> GetAll()
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var genres = await connection.QueryAsync<Genre>(@"
+                                                                SELECT Id, Name FROM Genres
+                                                                ");
+                return genres.ToList();
+            }
+        }
+
+        public async Task<Genre?> GetById(int id)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var genres = await connection.QueryFirstOrDefaultAsync<Genre>(@"
+                                                                SELECT Id, Name 
+                                                                FROM Genres
+                                                                WHERE Id = @Id
+                                                                ", new {id});
+                return genres;
+            }
         }
     }
 }
