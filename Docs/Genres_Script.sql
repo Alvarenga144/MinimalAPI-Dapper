@@ -24,3 +24,5 @@ ELSE
 UPDATE Genres
 SET Name = @Name
 WHERE Id = @Id
+
+DELETE Genres WHERE Id = @Id
