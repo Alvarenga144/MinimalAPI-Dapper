@@ -37,6 +37,7 @@ namespace MinimalAPIsMovies.Repositories
             {
                 var genres = await connection.QueryAsync<Genre>(@"
                                                                 SELECT Id, Name FROM Genres
+                                                                ORDER BY Name
                                                                 ");
                 return genres.ToList();
             }
