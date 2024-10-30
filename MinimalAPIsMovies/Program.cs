@@ -39,12 +39,14 @@ app.UseOutputCache();
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/genres", async (IGenresRepository genresRepository) =>
+var genresEndpoints = app.MapGroup("/genres");
+
+genresEndpoints.MapGet("/", async (IGenresRepository genresRepository) =>
 {
     return await genresRepository.GetAll();
 }).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("genres-get"));
 
-app.MapGet("/genres/{id:int}", async (int id, IGenresRepository genresRepository) =>
+genresEndpoints.MapGet("/{id:int}", async (int id, IGenresRepository genresRepository) =>
 {
     var genre = await genresRepository.GetById(id);
 
@@ -56,14 +58,14 @@ app.MapGet("/genres/{id:int}", async (int id, IGenresRepository genresRepository
     return Results.Ok(genre);
 });
 
-app.MapPost("/genres", async (Genre genre, IGenresRepository genresRepository, IOutputCacheStore outputCacheStore) =>
+genresEndpoints.MapPost("/", async (Genre genre, IGenresRepository genresRepository, IOutputCacheStore outputCacheStore) =>
 {
     await genresRepository.Create(genre);
     await outputCacheStore.EvictByTagAsync("genres-get", default);
     return TypedResults.Created($"/genres/{genre.Id}", genre);
 });
 
-app.MapPut("/genres/{id:int}", async (int id, Genre genre, IGenresRepository repository, IOutputCacheStore outputCacheStore) =>
+genresEndpoints.MapPut("/{id:int}", async (int id, Genre genre, IGenresRepository repository, IOutputCacheStore outputCacheStore) =>
 {
     var exist = await repository.Exist(id);
 
@@ -77,7 +79,7 @@ app.MapPut("/genres/{id:int}", async (int id, Genre genre, IGenresRepository rep
     return Results.NoContent();
 });
 
-app.MapDelete("/genres/{id:int}", async (int id, IGenresRepository repository, IOutputCacheStore outputCacheStore) =>
+genresEndpoints.MapDelete("/{id:int}", async (int id, IGenresRepository repository, IOutputCacheStore outputCacheStore) =>
 {
     var exist = await repository.Exist(id);
 
