@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Services zone - Begin
 
 builder.Services.AddScoped<IGenresRepository, GenresRepository>();
-
+/*
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(configuration =>
@@ -20,6 +20,7 @@ builder.Services.AddCors(options =>
         configuration.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
+*/
 builder.Services.AddOutputCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,7 +34,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors();
+//app.UseCors();
 app.UseOutputCache();
 
 app.MapGet("/", () => "Hello World!");
@@ -60,6 +61,34 @@ app.MapPost("/genres", async (Genre genre, IGenresRepository genresRepository, I
     await genresRepository.Create(genre);
     await outputCacheStore.EvictByTagAsync("genres-get", default);
     return TypedResults.Created($"/genres/{genre.Id}", genre);
+});
+
+app.MapPut("/genres/{id:int}", async (int id, Genre genre, IGenresRepository repository, IOutputCacheStore outputCacheStore) =>
+{
+    var exist = await repository.Exist(id);
+
+    if (!exist)
+    {
+        return Results.NotFound();
+    }
+
+    await repository.Update(genre);
+    await outputCacheStore.EvictByTagAsync("genres-get", default);
+    return Results.NoContent();
+});
+
+app.MapDelete("/genres/{id:int}", async (int id, IGenresRepository repository, IOutputCacheStore outputCacheStore) =>
+{
+    var exist = await repository.Exist(id);
+
+    if (!exist)
+    {
+        return Results.NotFound();
+    }
+
+    await repository.Delete(id);
+    await outputCacheStore.EvictByTagAsync("genres-get", default);
+    return Results.NoContent();
 });
 
 // Middlewares zone - End
