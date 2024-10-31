@@ -1,5 +1,6 @@
 using MinimalAPIsMovies.Endpoints;
 using MinimalAPIsMovies.Repositories;
+using MinimalAPIsMovies.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IGenresRepository, GenresRepository>();
 builder.Services.AddScoped<IActorsRepository, ActorsRepository>();
+builder.Services.AddTransient<IFileStorage, AzureFileStorage>();
 builder.Services.AddAutoMapper(typeof(Program));
 // Services zone - End
 
