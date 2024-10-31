@@ -20,6 +20,7 @@ app.UseSwaggerUI();
 app.UseOutputCache();
 
 app.MapGroup("/genres").MapGenres();
+app.MapGroup("/actors").MapActors();
 // Middlewares zone - End
 
 app.Run();
