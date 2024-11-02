@@ -20,6 +20,7 @@ namespace MinimalAPIsMovies.Endpoints
             builder.MapGet("/{id:int}", GetById);
             builder.MapGet("getByName/{name}", GetByName);
             builder.MapPost("/", Create).DisableAntiforgery();
+            builder.MapPut("/{id:int}", Update).DisableAntiforgery();
             return builder;
         }
 
@@ -65,6 +66,30 @@ namespace MinimalAPIsMovies.Endpoints
             await outputCacheStore.EvictByTagAsync("actors-get", default);
             var actorDTO = mapper.Map<ActorDTO>(actor);
             return TypedResults.Created($"/actors/{id}", actorDTO);
+        }
+
+        static async Task<Results<NoContent, NotFound>> Update(int id, [FromForm] CreateActorDTO createActorDTO, IActorsRepository repository, IFileStorage fileStorage, IOutputCacheStore outputCacheStore, IMapper mapper)
+        {
+            var actorDb = await repository.GetById(id);
+
+            if (actorDb is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var actorForUpdate = mapper.Map<Actor>(createActorDTO);
+            actorForUpdate.Id = id;
+            actorForUpdate.Picture = actorDb.Picture;
+
+            if (createActorDTO.Picture is not null)
+            {
+                var url = await fileStorage.Edit(actorForUpdate.Picture, container, createActorDTO.Picture);
+                actorForUpdate.Picture = url;
+            }
+
+            await repository.Update(actorForUpdate);
+            await outputCacheStore.EvictByTagAsync("actors-get", default);
+            return TypedResults.NoContent();
         }
     }
 }
