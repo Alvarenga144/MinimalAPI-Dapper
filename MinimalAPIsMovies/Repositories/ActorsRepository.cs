@@ -74,5 +74,15 @@ namespace MinimalAPIsMovies.Repositories
                 await connection.ExecuteAsync("Actors_Delete", new { id }, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public async Task<List<Actor>> GetByName(string name)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var actors = await connection.QueryAsync<Actor>("Actors_GetByName", new { name }, commandType: CommandType.StoredProcedure);
+
+                return actors.ToList();
+            }
+        }
     }
 }

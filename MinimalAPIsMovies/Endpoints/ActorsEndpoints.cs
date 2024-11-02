@@ -18,6 +18,7 @@ namespace MinimalAPIsMovies.Endpoints
             builder.MapGet("/", GetAll)
                 .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("actors-get"));
             builder.MapGet("/{id:int}", GetById);
+            builder.MapGet("getByName/{name}", GetByName);
             builder.MapPost("/", Create).DisableAntiforgery();
             return builder;
         }
@@ -40,6 +41,13 @@ namespace MinimalAPIsMovies.Endpoints
 
             var actorDTO = mapper.Map<ActorDTO>(actor);
             return TypedResults.Ok(actorDTO);
+        }
+
+        static async Task<Ok<List<ActorDTO>>> GetByName(string name, IActorsRepository repository, IMapper mapper)
+        {
+            var actors = await repository.GetByName(name);
+            var actorsDTO = mapper.Map<List<ActorDTO>>(actors);
+            return TypedResults.Ok(actorsDTO);
         }
 
         static async Task<Created<ActorDTO>> Create([FromForm] CreateActorDTO createActorDTO, IActorsRepository repository, IOutputCacheStore outputCacheStore, IMapper mapper, IFileStorage fileStorage)
