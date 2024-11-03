@@ -28,6 +28,7 @@ app.UseOutputCache();
 app.MapGroup("/genres").MapGenres();
 app.MapGroup("/actors").MapActors();
 app.MapGroup("/movies").MapMovies();
+app.MapGroup("/movies/{movieId:int}/comments").MapComments();
 // Middlewares zone - End
 
 app.Run();
