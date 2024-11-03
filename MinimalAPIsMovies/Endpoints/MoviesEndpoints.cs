@@ -19,7 +19,7 @@ namespace MinimalAPIsMovies.Endpoints
             builder.MapGet("/{id:int}", GetById);
             //builder.MapGet("getByName/{name}", GetByName);
             builder.MapPost("/", Create).DisableAntiforgery();
-            //builder.MapPut("/{id:int}", Update).DisableAntiforgery();
+            builder.MapPut("/{id:int}", Update).DisableAntiforgery();
             //builder.MapDelete("/{id:int}", Delete);
             return builder;
         }
@@ -59,6 +59,30 @@ namespace MinimalAPIsMovies.Endpoints
             await outputCacheStore.EvictByTagAsync("movies-get", default);
             var moviesDTO = mapper.Map<MovieDTO>(movie);
             return TypedResults.Created($"/movies/{id}", moviesDTO);
+        }
+
+        static async Task<Results<NoContent, NotFound>> Update(int id, [FromForm] CreateMovieDTO createMovieDTO, IMoviesRepository repository, IFileStorage fileStorage, IOutputCacheStore outputCacheStore, IMapper mapper)
+        {
+            var movieDb = await repository.GetById(id);
+
+            if (movieDb is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var movieForUpdate = mapper.Map<Movie>(createMovieDTO);
+            movieForUpdate.Id = id;
+            movieForUpdate.Poster = movieDb.Poster;
+
+            if (createMovieDTO.Poster is not null)
+            {
+                var url = await fileStorage.Edit(movieForUpdate.Poster, container, createMovieDTO.Poster);
+                movieForUpdate.Poster = url;
+            }
+
+            await repository.Update(movieForUpdate);
+            await outputCacheStore.EvictByTagAsync("movies-get", default);
+            return TypedResults.NoContent();
         }
     }
 }
