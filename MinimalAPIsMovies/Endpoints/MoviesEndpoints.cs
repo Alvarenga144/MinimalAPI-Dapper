@@ -15,13 +15,34 @@ namespace MinimalAPIsMovies.Endpoints
 
         public static RouteGroupBuilder MapMovies(this RouteGroupBuilder builder)
         {
-            //builder.MapGet("/", GetAll).CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("movies-get"));
-            //builder.MapGet("/{id:int}", GetById);
+            builder.MapGet("/", GetAll).CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("movies-get"));
+            builder.MapGet("/{id:int}", GetById);
             //builder.MapGet("getByName/{name}", GetByName);
             builder.MapPost("/", Create).DisableAntiforgery();
             //builder.MapPut("/{id:int}", Update).DisableAntiforgery();
             //builder.MapDelete("/{id:int}", Delete);
             return builder;
+        }
+
+        static async Task<Ok<List<MovieDTO>>> GetAll(IMoviesRepository repository, IMapper mapper, int page = 1, int recordsPerPage = 10)
+        {
+            var pagination = new PaginationDTO { Page = page, RecordsPerPage = recordsPerPage };
+            var movies = await repository.GetAll(pagination);
+            var moviesDTO = mapper.Map<List<MovieDTO>>(movies);
+            return TypedResults.Ok(moviesDTO);
+        }
+
+        static async Task<Results<Ok<MovieDTO>, NotFound>> GetById(int id, IMoviesRepository repository, IMapper mapper)
+        {
+            var movie = await repository.GetById(id);
+
+            if (movie is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var movieDTO = mapper.Map<MovieDTO>(movie);
+            return TypedResults.Ok(movieDTO);
         }
 
         static async Task<Created<MovieDTO>> Create([FromForm] CreateMovieDTO createMovieDTO, IMoviesRepository repository, IOutputCacheStore outputCacheStore, IMapper mapper, IFileStorage fileStorage)
