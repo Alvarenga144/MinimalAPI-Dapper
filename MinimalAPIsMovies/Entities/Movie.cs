@@ -7,5 +7,6 @@
         public bool InTheaters { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string? Poster { get; set; }
+        public List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

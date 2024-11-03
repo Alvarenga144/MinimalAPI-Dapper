@@ -19,10 +19,10 @@ namespace MinimalAPIsMovies.Repositories
             using (var connection = new SqlConnection(connectionString))
             {
                 var id = await connection.QuerySingleAsync<int>(@"Genres_Create", new { genre.Name }, commandType: CommandType.StoredProcedure);
+
                 genre.Id = id;
                 return id;
             }
-
         }
 
         public async Task<List<Genre>> GetAll()

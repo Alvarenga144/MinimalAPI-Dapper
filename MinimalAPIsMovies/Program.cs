@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IGenresRepository, GenresRepository>();
 builder.Services.AddScoped<IActorsRepository, ActorsRepository>();
 builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
+builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 
 builder.Services.AddTransient<IFileStorage, AzureFileStorage>();
 builder.Services.AddHttpContextAccessor();
