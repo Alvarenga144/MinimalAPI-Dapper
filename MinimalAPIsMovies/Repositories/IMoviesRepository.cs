@@ -11,5 +11,6 @@ namespace MinimalAPIsMovies.Repositories
         Task<bool> Exist(int id);
         Task Update(Movie movie);
         Task Delete(int id);
+        Task Assign(int id, List<int> genresIds);
     }
 }

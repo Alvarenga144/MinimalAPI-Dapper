@@ -91,5 +91,21 @@ namespace MinimalAPIsMovies.Repositories
                 await connection.ExecuteAsync("Movies_Delete", new { id }, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public async Task Assign(int id, List<int> genresIds)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("Id", typeof(int));
+
+            foreach (var genreId in genresIds)
+            {
+                dt.Rows.Add(genreId);
+            }
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.ExecuteAsync("Movies_AssignGenres", new { moviesId = id, genresIds = dt }, commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }
