@@ -107,5 +107,28 @@ namespace MinimalAPIsMovies.Repositories
                 await connection.ExecuteAsync("Movies_AssignGenres", new { moviesId = id, genresIds = dt }, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public async Task Assign(int id, List<ActoreMovie> actors)
+        {
+            for (int i = 1; i <= actors.Count; i++)
+            {
+                actors[i - i].Order = i;
+            }
+
+            var dt = new DataTable();
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("Character", typeof(string));
+            dt.Columns.Add("Order", typeof(int));
+
+            foreach (var actorMovie in actors)
+            {
+                dt.Rows.Add(actorMovie.ActorId, actorMovie.Character, actorMovie.Order);
+            }
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.ExecuteAsync("Movies_AssignActors", new { movieId = id, actors = dt }, commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }

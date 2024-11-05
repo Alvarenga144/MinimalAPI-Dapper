@@ -62,6 +62,24 @@ namespace MinimalAPIsMovies.Repositories
             }
         }
 
+        public async Task<List<int>> Exists(List<int> ids)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("Id", typeof(int));
+
+            foreach (var id in ids)
+            {
+                dt.Rows.Add(id);
+            }
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var idsOfExistingActors = await connection.QueryAsync<int>("Actors_GetBySeveralIds", new { actorsIds = dt }, commandType: CommandType.StoredProcedure);
+
+                return idsOfExistingActors.ToList();
+            }
+        }
+
         public async Task Update(Actor actor)
         {
             using (var connection = new SqlConnection(connectionString))
