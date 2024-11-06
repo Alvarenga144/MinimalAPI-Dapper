@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using MinimalAPIsMovies.DTOs;
 using MinimalAPIsMovies.Entities;
+using MinimalAPIsMovies.Filters;
 using MinimalAPIsMovies.Repositories;
 using MinimalAPIsMovies.Services;
 
@@ -17,8 +18,8 @@ namespace MinimalAPIsMovies.Endpoints
         {
             builder.MapGet("/", GetAll).CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("movies-get"));
             builder.MapGet("/{id:int}", GetById);
-            builder.MapPost("/", Create).DisableAntiforgery();
-            builder.MapPut("/{id:int}", Update).DisableAntiforgery();
+            builder.MapPost("/", Create).DisableAntiforgery().AddEndpointFilter<ValidationFilter<CreateMovieDTO>>();
+            builder.MapPut("/{id:int}", Update).DisableAntiforgery().AddEndpointFilter<ValidationFilter<CreateMovieDTO>>();
             builder.MapDelete("/{id:int}", Delete);
             builder.MapPost("/{id:int}/assignGenres", AssignGenres);
             builder.MapPost("/{id:int}/assignActors", AssignActors);
