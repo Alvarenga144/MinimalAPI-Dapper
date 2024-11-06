@@ -8,5 +8,7 @@
         public DateTime ReleaseDate { get; set; }
         public string? Poster { get; set; }
         public List<Comment> Comments { get; set; } = new List<Comment>();
+        public List<GenreMovie> GenreMovies { get; set; } = new List<GenreMovie>();
+        public List<ActoreMovie> ActoreMovies { get; set; } = new List<ActoreMovie>();
     }
 }

@@ -52,8 +52,30 @@ namespace MinimalAPIsMovies.Repositories
                 {
                     var movie = await multi.ReadFirstAsync<Movie>();
                     var comments = await multi.ReadAsync<Comment>();
+                    var genres = await multi.ReadAsync<Genre>();
+                    var actors = await multi.ReadAsync<ActorMovieDTO>();
 
                     movie.Comments = comments.ToList();
+
+                    foreach (var genre in genres)
+                    {
+                        movie.GenreMovies.Add(new GenreMovie
+                        {
+                            GenreId = genre.Id,
+                            Genre = genre
+                        });
+                    }
+
+                    foreach (var actor in actors)
+                    {
+                        movie.ActoreMovies.Add(new ActoreMovie
+                        {
+                            ActorId = actor.Id,
+                            Character = actor.Character,
+                            Actor = new Actor { Name = actor.Name }
+                        });
+                    }
+
                     return movie;
                 }
             }
