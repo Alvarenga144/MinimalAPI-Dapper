@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using MinimalAPIsMovies.DTOs;
 using MinimalAPIsMovies.Filters;
 using MinimalAPIsMovies.Utilities;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -15,7 +14,9 @@ namespace MinimalAPIsMovies.Endpoints
     {
         public static RouteGroupBuilder MapUsers(this RouteGroupBuilder builder)
         {
-            builder.MapPost("/", Register)
+            builder.MapPost("/register", Register)
+                .AddEndpointFilter<ValidationFilter<UserCredentialsDTO>>();
+            builder.MapPost("/login", Login)
                 .AddEndpointFilter<ValidationFilter<UserCredentialsDTO>>();
             return builder;
         }
@@ -40,6 +41,35 @@ namespace MinimalAPIsMovies.Endpoints
             else
             {
                 return TypedResults.BadRequest(result.Errors);
+            }
+        }
+
+        static async Task<Results<Ok<AuthenticationResponseDTO>, BadRequest<string>>> Login(
+            UserCredentialsDTO userCredentialsDTO,
+            [FromServices] SignInManager<IdentityUser> signInManager,
+            [FromServices] UserManager<IdentityUser> userManager,
+            IConfiguration configuration
+            )
+        {
+            var user = await userManager.FindByEmailAsync(userCredentialsDTO.Email);
+
+            if (user is null)
+            {
+                return TypedResults.BadRequest("There was a problem with the email or the password");
+            }
+
+            var results = await signInManager.CheckPasswordSignInAsync(user,
+                userCredentialsDTO.Password, lockoutOnFailure: false);
+
+            if (results.Succeeded)
+            {
+                var authenticationResponse =
+                   await BuildToken(userCredentialsDTO, configuration, userManager);
+                return TypedResults.Ok(authenticationResponse);
+            }
+            else
+            {
+                return TypedResults.BadRequest("There was a problem with the email or the password");
             }
         }
 
