@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MinimalAPIsMovies.DTOs;
 using MinimalAPIsMovies.Filters;
+using MinimalAPIsMovies.Services;
 using MinimalAPIsMovies.Utilities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,6 +19,14 @@ namespace MinimalAPIsMovies.Endpoints
                 .AddEndpointFilter<ValidationFilter<UserCredentialsDTO>>();
             builder.MapPost("/login", Login)
                 .AddEndpointFilter<ValidationFilter<UserCredentialsDTO>>();
+
+            builder.MapPost("/makeadmin", MakeAdmin)
+                .AddEndpointFilter<ValidationFilter<EditClaimDTO>>()
+                .RequireAuthorization("isadmin");
+            builder.MapPost("/removeadmin", RemoveAdmin)
+                .AddEndpointFilter<ValidationFilter<EditClaimDTO>>()
+                .RequireAuthorization("isadmin");
+            builder.MapGet("/renewtoken", Renew).RequireAuthorization();
             return builder;
         }
 
@@ -71,6 +80,46 @@ namespace MinimalAPIsMovies.Endpoints
             {
                 return TypedResults.BadRequest("There was a problem with the email or the password");
             }
+        }
+
+        static async Task<Results<NoContent, NotFound>> MakeAdmin(EditClaimDTO editClaimDTO, [FromServices] UserManager<IdentityUser> userManager)
+        {
+            var user = await userManager.FindByEmailAsync(editClaimDTO.Email);
+
+            if (user is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            await userManager.AddClaimAsync(user, new Claim("isadmin", "true"));
+            return TypedResults.NoContent();
+        }
+
+        static async Task<Results<NoContent, NotFound>> RemoveAdmin(EditClaimDTO editClaimDTO, [FromServices] UserManager<IdentityUser> userManager)
+        {
+            var user = await userManager.FindByEmailAsync(editClaimDTO.Email);
+
+            if (user is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            await userManager.RemoveClaimAsync(user, new Claim("isadmin", "true"));
+            return TypedResults.NoContent();
+        }
+
+        private static async Task<Results<NotFound, Ok<AuthenticationResponseDTO>>> Renew(IUsersService usersService, IConfiguration configuration, [FromServices] UserManager<IdentityUser> userManager)
+        {
+            var user = await usersService.GetUser();
+
+            if (user is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var userCredential = new UserCredentialsDTO { Email = user.Email };
+            var response = await BuildToken(userCredential, configuration, userManager);
+            return TypedResults.Ok(response);
         }
 
         private async static Task<AuthenticationResponseDTO>

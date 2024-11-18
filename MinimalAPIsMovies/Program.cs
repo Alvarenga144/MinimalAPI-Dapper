@@ -47,7 +47,10 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
         //IssuerSigningKey = KeysHandler.GetKey(builder.Configuration).First()
     };
 });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("isadmin", policy => policy.RequireClaim("isadmin"));
+});
 // Services zone - End
 
 var app = builder.Build();

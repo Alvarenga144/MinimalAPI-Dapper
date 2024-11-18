@@ -18,11 +18,18 @@ namespace MinimalAPIsMovies.Endpoints
         {
             builder.MapGet("/", GetAll).CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("movies-get"));
             builder.MapGet("/{id:int}", GetById);
-            builder.MapPost("/", Create).DisableAntiforgery().AddEndpointFilter<ValidationFilter<CreateMovieDTO>>();
-            builder.MapPut("/{id:int}", Update).DisableAntiforgery().AddEndpointFilter<ValidationFilter<CreateMovieDTO>>();
-            builder.MapDelete("/{id:int}", Delete);
-            builder.MapPost("/{id:int}/assignGenres", AssignGenres);
-            builder.MapPost("/{id:int}/assignActors", AssignActors);
+
+            builder.MapPost("/", Create)
+                .DisableAntiforgery()
+                .AddEndpointFilter<ValidationFilter<CreateMovieDTO>>()
+                .RequireAuthorization("isadmin");
+            builder.MapPut("/{id:int}", Update)
+                .DisableAntiforgery()
+                .AddEndpointFilter<ValidationFilter<CreateMovieDTO>>()
+                .RequireAuthorization("isadmin");
+            builder.MapDelete("/{id:int}", Delete).RequireAuthorization("isadmin");
+            builder.MapPost("/{id:int}/assignGenres", AssignGenres).RequireAuthorization("isadmin");
+            builder.MapPost("/{id:int}/assignActors", AssignActors).RequireAuthorization("isadmin");
             return builder;
         }
 
