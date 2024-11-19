@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "d61904b6-ca2c-46c6-9994-e5a563b9fd3e",
+		"name": "MinimalAPIs Dapper",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31847883"
+	},
+	"item": [
+		{
+			"name": "Genres",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVhbHZhcmVuZ2FAZ21haWwuY29tIiwiV2hhdGV2ZXIgSSB3YW50IjoidGhpcyBpcyBhIHZhbHVlIiwiZXhwIjoxNzYzNDA1NDczfQ.xR00op2vqfsm1sqsInYRrZ-cXQDb6IH4c9gkaTsBLHE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7088/genres",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"genres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Comments",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVhbHZhcmVuZ2FAZ21haWwuY29tIiwiV2hhdGV2ZXIgSSB3YW50IjoidGhpcyBpcyBhIHZhbHVlIiwiZXhwIjoxNzYzNDQxMjI1fQ.bd25L-IVK0dmCT4n0APHf7xTJhJPpY0STbA07taZJJw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"body\": \"Best pelicula ever made upd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7088/movies/2/comments",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"movies",
+						"2",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actors",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Samuel L. Jackson",
+							"type": "text"
+						},
+						{
+							"key": "DateOfBirth",
+							"value": "1955-01-02",
+							"type": "text"
+						},
+						{
+							"key": "Picture",
+							"type": "file",
+							"src": "/C:/Users/esteb/OneDrive/Escritorio/Cursos/MinimalAPI-Dapper/Docs/Resources/SamuelJackson.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7088/actors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"actors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actors",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Tom Holland",
+							"type": "text"
+						},
+						{
+							"key": "DateOfBirth",
+							"value": "1995-01-02",
+							"type": "text"
+						},
+						{
+							"key": "Picture",
+							"type": "file",
+							"src": "/C:/Users/esteb/OneDrive/Escritorio/Cursos/MinimalAPI-Dapper/Docs/Resources/TomHolland.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7088/actors/2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"actors",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actors",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVhbHZhcmVuZ2FAZ21haWwuY29tIiwiV2hhdGV2ZXIgSSB3YW50IjoidGhpcyBpcyBhIHZhbHVlIiwiaXNhZG1pbiI6InRydWUiLCJleHAiOjE3NjM0NDM2NDh9.NfD6s1GmK2T88FIh1PByYJRi3nHgtlpNDUl-kS_PURc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7088/actors/200",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"actors",
+						"200"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movies",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "The conjuraso",
+							"type": "text"
+						},
+						{
+							"key": "inTheaters",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "releaseDate",
+							"value": "2016-10-02",
+							"type": "text"
+						},
+						{
+							"key": "poster",
+							"type": "file",
+							"src": "/C:/Users/esteb/OneDrive/Escritorio/Cursos/MinimalAPI-Dapper/Docs/Resources/theconjurin.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7088/movies",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movies",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "lombrespider: Suputamadre de lejos",
+							"type": "text"
+						},
+						{
+							"key": "inTheaters",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "releaseDate",
+							"value": "2019-07-02",
+							"type": "text"
+						},
+						{
+							"key": "poster",
+							"type": "file",
+							"src": "/C:/Users/esteb/OneDrive/Escritorio/Cursos/MinimalAPI-Dapper/Docs/Resources/lejisimodecasa.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7088/movies/1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"movies",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Renew",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVhbHZhcmVuZ2FAZ21haWwuY29tIiwiV2hhdGV2ZXIgSSB3YW50IjoidGhpcyBpcyBhIHZhbHVlIiwiaXNhZG1pbiI6InRydWUiLCJleHAiOjE3NjM0NDM2NDh9.NfD6s1GmK2T88FIh1PByYJRi3nHgtlpNDUl-kS_PURc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7088/users/renewtoken",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7088",
+					"path": [
+						"users",
+						"renewtoken"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
