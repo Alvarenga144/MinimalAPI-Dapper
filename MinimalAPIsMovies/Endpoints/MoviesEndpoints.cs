@@ -24,11 +24,15 @@ namespace MinimalAPIsMovies.Endpoints
             builder.MapPost("/", Create)
                 .DisableAntiforgery()
                 .AddEndpointFilter<ValidationFilter<CreateMovieDTO>>()
-                .RequireAuthorization("isadmin");
+                .RequireAuthorization("isadmin")
+                .WithOpenApi();
+
             builder.MapPut("/{id:int}", Update)
                 .DisableAntiforgery()
                 .AddEndpointFilter<ValidationFilter<CreateMovieDTO>>()
-                .RequireAuthorization("isadmin");
+                .RequireAuthorization("isadmin")
+                .WithOpenApi();
+
             builder.MapDelete("/{id:int}", Delete).RequireAuthorization("isadmin");
             builder.MapPost("/{id:int}/assignGenres", AssignGenres).RequireAuthorization("isadmin");
             builder.MapPost("/{id:int}/assignActors", AssignActors).RequireAuthorization("isadmin");

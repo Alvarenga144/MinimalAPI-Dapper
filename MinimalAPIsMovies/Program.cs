@@ -2,10 +2,12 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MinimalAPIsMovies.Endpoints;
 using MinimalAPIsMovies.Entities;
 using MinimalAPIsMovies.Repositories;
 using MinimalAPIsMovies.Services;
+using MinimalAPIsMovies.Swagger;
 using MinimalAPIsMovies.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,18 +24,29 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Movies API",
         Description = "THis is a web api for working with movie data",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        Contact = new OpenApiContact
         {
             Email = "estebanalvarenga2002@gmail.com",
             Name = "Esteban Alvarenga",
             Url = new Uri("https://github.com/Alvarenga144")
         },
-        License = new Microsoft.OpenApi.Models.OpenApiLicense
+        License = new OpenApiLicense
         {
             Name = "MIT",
             Url = new Uri("https://opensource.org/licence/mit/")
         }
     });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
+
+    options.OperationFilter<AuthorizationFilter>();
 });
 
 builder.Services.AddScoped<IGenresRepository, GenresRepository>();
