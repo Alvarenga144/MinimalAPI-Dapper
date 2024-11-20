@@ -7,6 +7,7 @@ using MinimalAPIsMovies.Entities;
 using MinimalAPIsMovies.Filters;
 using MinimalAPIsMovies.Repositories;
 using MinimalAPIsMovies.Services;
+using MinimalAPIsMovies.Utilities;
 
 namespace MinimalAPIsMovies.Endpoints
 {
@@ -17,7 +18,9 @@ namespace MinimalAPIsMovies.Endpoints
         public static RouteGroupBuilder MapActors(this RouteGroupBuilder builder)
         {
             builder.MapGet("/", GetAll)
-                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("actors-get"));
+                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(1)).Tag("actors-get"))
+                .AddPaginationParameters();
+
             builder.MapGet("/{id:int}", GetById);
             builder.MapGet("getByName/{name}", GetByName);
 

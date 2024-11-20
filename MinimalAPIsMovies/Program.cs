@@ -16,7 +16,25 @@ builder.Services.AddIdentityCore<IdentityUser>();
 builder.Services.AddTransient<SignInManager<IdentityUser>>();
 builder.Services.AddOutputCache();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Movies API",
+        Description = "THis is a web api for working with movie data",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Email = "estebanalvarenga2002@gmail.com",
+            Name = "Esteban Alvarenga",
+            Url = new Uri("https://github.com/Alvarenga144")
+        },
+        License = new Microsoft.OpenApi.Models.OpenApiLicense
+        {
+            Name = "MIT",
+            Url = new Uri("https://opensource.org/licence/mit/")
+        }
+    });
+});
 
 builder.Services.AddScoped<IGenresRepository, GenresRepository>();
 builder.Services.AddScoped<IActorsRepository, ActorsRepository>();
