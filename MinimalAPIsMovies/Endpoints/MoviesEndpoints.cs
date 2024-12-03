@@ -21,6 +21,9 @@ namespace MinimalAPIsMovies.Endpoints
                 .AddPaginationParameters();
             builder.MapGet("/{id:int}", GetById);
 
+            builder.MapGet("/filter", FilterMovies).AddMoviesFilterParameters();
+
+
             builder.MapPost("/", Create)
                 .DisableAntiforgery()
                 .AddEndpointFilter<ValidationFilter<CreateMovieDTO>>()
@@ -165,6 +168,13 @@ namespace MinimalAPIsMovies.Endpoints
             var actors = mapper.Map<List<ActoreMovie>>(actorsDTO);
             await moviesRepository.Assign(id, actors);
             return TypedResults.NoContent();
+        }
+
+        static async Task<Ok<List<MovieDTO>>> FilterMovies(MoviesFilterDTO moviesFilterDTO, IMoviesRepository moviesRepository, IMapper mapper)
+        {
+            var movies = await moviesRepository.Filter(moviesFilterDTO);
+            var moviesDTO = mapper.Map<List<MovieDTO>>(movies);
+            return TypedResults.Ok(moviesDTO);
         }
     }
 }

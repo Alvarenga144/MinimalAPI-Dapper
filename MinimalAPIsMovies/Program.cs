@@ -16,7 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IUserStore<IdentityUser>, UserStore>();
 builder.Services.AddIdentityCore<IdentityUser>();
 builder.Services.AddTransient<SignInManager<IdentityUser>>();
-builder.Services.AddOutputCache();
+// builder.Services.AddOutputCache();
+builder.Services.AddStackExchangeRedisOutputCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
