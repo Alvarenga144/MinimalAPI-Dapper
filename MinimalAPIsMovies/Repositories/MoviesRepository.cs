@@ -152,5 +152,10 @@ namespace MinimalAPIsMovies.Repositories
                 await connection.ExecuteAsync("Movies_AssignActors", new { movieId = id, actors = dt }, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public Task<List<Movie>> Filter(MoviesFilterDTO moviesFilterDTO)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
